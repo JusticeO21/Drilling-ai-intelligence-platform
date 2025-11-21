@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/upload", response_model=drilling_schema.FileProcessingResponse)
 async def upload_drilling_data(file: UploadFile = File(...)):
-    if not file.filename.endswith(('.csv', '.xlsx', '.xls')):
+    if not file.filename.endswith((".csv", ".xlsx", ".xls")):
         raise HTTPException(status_code=400, detail="File must be CSV or Excel")
 
     try:
@@ -20,7 +20,7 @@ async def upload_drilling_data(file: UploadFile = File(...)):
         rag_chunks = process_file_for_rag(contents, file.filename)
 
         # Determine file type for response
-        if file.filename.endswith('.csv'):
+        if file.filename.endswith(".csv"):
             file_type = "csv"
         else:
             file_type = "excel"
@@ -32,7 +32,9 @@ async def upload_drilling_data(file: UploadFile = File(...)):
                 embedding_model = get_embedding_model()
                 logger.info(f"Embedding model created: {type(embedding_model)}")
                 initialized_manager = rag_module.initialize_rag_manager(embedding_model)
-                logger.info(f"RAG manager initialized: {initialized_manager is not None}")
+                logger.info(
+                    f"RAG manager initialized: {initialized_manager is not None}"
+                )
             except Exception as e:
                 logger.error(f"Failed to initialize RAG manager: {e}")
                 raise
@@ -41,8 +43,10 @@ async def upload_drilling_data(file: UploadFile = File(...)):
         session_id = rag_module.rag_manager.create_session(rag_chunks)
 
         # Create sample data from chunks (first few chunks)
-        sample_data = [{"chunk": chunk[:200] + "..." if len(chunk) > 200 else chunk}
-                      for chunk in rag_chunks[:5]]
+        sample_data = [
+            {"chunk": chunk[:200] + "..." if len(chunk) > 200 else chunk}
+            for chunk in rag_chunks[:5]
+        ]
 
         response = {
             "filename": file.filename,
@@ -52,10 +56,12 @@ async def upload_drilling_data(file: UploadFile = File(...)):
             "columns": [],  # Will be determined by document loader
             "sample_data": sample_data,
             "session_id": session_id,
-            "chunks_count": len(rag_chunks)
+            "chunks_count": len(rag_chunks),
         }
 
-        logger.info(f"Processed file {file.filename} into {len(rag_chunks)} chunks, created session {session_id}")
+        logger.info(
+            f"Processed file {file.filename} into {len(rag_chunks)} chunks, created session {session_id}"
+        )
         return response
 
     except Exception as e:
@@ -72,7 +78,9 @@ def query_drilling_data(query: drilling_schema.QueryRequest):
             embedding_model = get_embedding_model()
             rag_module.initialize_rag_manager(embedding_model)
 
-        result = rag_module.rag_manager.query_session(query.session_id, query.question, query.n_results)
+        result = rag_module.rag_manager.query_session(
+            query.session_id, query.question, query.n_results
+        )
         return result
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

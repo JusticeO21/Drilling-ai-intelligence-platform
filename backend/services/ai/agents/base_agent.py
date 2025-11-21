@@ -18,7 +18,9 @@ class BaseAgent(ABC):
         self.name = name
         self.llm = get_llm()
         self.system_prompt = self._get_system_prompt()
-        logger.info(f"Initialized {self.name} with {ai_settings.model_provider} provider")
+        logger.info(
+            f"Initialized {self.name} with {ai_settings.model_provider} provider"
+        )
 
     @abstractmethod
     def _get_system_prompt(self) -> str:
@@ -27,17 +29,11 @@ class BaseAgent(ABC):
 
     def create_chain(self):
         """Create a basic conversational chain"""
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", self.system_prompt),
-            ("human", "{input}")
-        ])
-
-        chain = (
-            RunnablePassthrough()
-            | prompt
-            | self.llm
-            | StrOutputParser()
+        prompt = ChatPromptTemplate.from_messages(
+            [("system", self.system_prompt), ("human", "{input}")]
         )
+
+        chain = RunnablePassthrough() | prompt | self.llm | StrOutputParser()
 
         return chain
 
@@ -80,7 +76,9 @@ class RAGAgent(BaseAgent):
             # Get response
             response = self.chat(formatted_prompt)
 
-            logger.info(f"{self.name} processed query with context for session {session_id}")
+            logger.info(
+                f"{self.name} processed query with context for session {session_id}"
+            )
             return response
 
         except Exception as e:

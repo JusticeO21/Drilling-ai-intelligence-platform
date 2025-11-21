@@ -15,7 +15,9 @@ class TestAIService:
     def test_chat_with_invalid_session(self):
         """Test chat with invalid session returns appropriate error"""
         service = AIService()
-        result = service.chat_with_data("invalid-session-id", "What is the average depth?")
+        result = service.chat_with_data(
+            "invalid-session-id", "What is the average depth?"
+        )
 
         assert "error" in result
         assert result["error"] == "invalid_session"

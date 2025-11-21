@@ -34,6 +34,7 @@ class RAGSessionManager:
 
     def _start_cleanup_thread(self):
         """Start background thread for session cleanup"""
+
         def cleanup_worker():
             while True:
                 time.sleep(self.cleanup_interval)
@@ -73,7 +74,7 @@ class RAGSessionManager:
             documents=documents,
             embedding=self.embedder,
             persist_directory=persist_dir,
-            collection_name=f"session_{session_id}"
+            collection_name=f"session_{session_id}",
         )
 
         session = RAGSession(session_id, vector_store)
@@ -96,7 +97,9 @@ class RAGSessionManager:
 
         try:
             # Use LangChain's similarity_search
-            docs = session.vector_store.similarity_search_with_score(question, k=n_results)
+            docs = session.vector_store.similarity_search_with_score(
+                question, k=n_results
+            )
 
             relevant_chunks = [doc.page_content for doc, score in docs]
             distances = [score for doc, score in docs]
@@ -105,7 +108,7 @@ class RAGSessionManager:
                 "session_id": session_id,
                 "question": question,
                 "relevant_chunks": relevant_chunks,
-                "distances": distances
+                "distances": distances,
             }
 
         except Exception as e:
@@ -125,7 +128,7 @@ class RAGSessionManager:
             "session_id": session_id,
             "created_at": session.created_at.isoformat(),
             "expires_at": session.expires_at.isoformat(),
-            "last_accessed": session.last_accessed.isoformat()
+            "last_accessed": session.last_accessed.isoformat(),
         }
 
 

@@ -7,7 +7,7 @@ def retrieve_context(session_id: str, query: str, max_chunks: int = 5) -> str:
     """Retrieve relevant context from RAG system"""
     try:
         results = rag_module.rag_manager.query_session(session_id, query, max_chunks)
-        relevant_chunks = results.get('relevant_chunks', [])
+        relevant_chunks = results.get("relevant_chunks", [])
 
         # Combine chunks into context string
         context = "\n\n".join(relevant_chunks)
@@ -55,5 +55,5 @@ def get_session_stats(session_id: str) -> Dict[str, Any]:
         "created_at": session_info["created_at"],
         "expires_at": session_info["expires_at"],
         "last_accessed": session_info["last_accessed"],
-        "is_active": True
+        "is_active": True,
     }

@@ -51,13 +51,27 @@ Always maintain a professional, helpful, and accurate tone. If you're unsure abo
     def _enhance_drilling_query(self, query: str) -> str:
         """Enhance user queries with drilling-specific context"""
         drilling_keywords = [
-            'well', 'drill', 'depth', 'pressure', 'mud', 'casing', 'bit',
-            'formation', 'reservoir', 'production', 'cost', 'efficiency',
-            'safety', 'equipment', 'optimization'
+            "well",
+            "drill",
+            "depth",
+            "pressure",
+            "mud",
+            "casing",
+            "bit",
+            "formation",
+            "reservoir",
+            "production",
+            "cost",
+            "efficiency",
+            "safety",
+            "equipment",
+            "optimization",
         ]
 
         query_lower = query.lower()
-        has_drilling_context = any(keyword in query_lower for keyword in drilling_keywords)
+        has_drilling_context = any(
+            keyword in query_lower for keyword in drilling_keywords
+        )
 
         if not has_drilling_context:
             # Add context hint for better retrieval
@@ -67,21 +81,23 @@ Always maintain a professional, helpful, and accurate tone. If you're unsure abo
 
         return query
 
-    def _post_process_drilling_response(self, response: str, original_query: str) -> str:
+    def _post_process_drilling_response(
+        self, response: str, original_query: str
+    ) -> str:
         """Post-process responses with drilling-specific formatting and suggestions"""
         # Add helpful suggestions based on query type
         query_lower = original_query.lower()
 
-        if 'cost' in query_lower or 'budget' in query_lower:
+        if "cost" in query_lower or "budget" in query_lower:
             response += "\n\n💡 **Cost Analysis Tip**: Consider reviewing drilling efficiency metrics and equipment utilization rates for optimization opportunities."
 
-        elif 'safety' in query_lower or 'risk' in query_lower:
+        elif "safety" in query_lower or "risk" in query_lower:
             response += "\n\n⚠️ **Safety Note**: Always prioritize safety protocols and ensure compliance with industry standards and regulations."
 
-        elif 'optimization' in query_lower or 'efficiency' in query_lower:
+        elif "optimization" in query_lower or "efficiency" in query_lower:
             response += "\n\n🔧 **Optimization Suggestion**: Look into real-time monitoring systems and predictive analytics for continuous improvement."
 
-        elif 'depth' in query_lower or 'pressure' in query_lower:
+        elif "depth" in query_lower or "pressure" in query_lower:
             response += "\n\n📊 **Technical Note**: Monitor pressure gradients and formation integrity throughout the drilling process."
 
         return response

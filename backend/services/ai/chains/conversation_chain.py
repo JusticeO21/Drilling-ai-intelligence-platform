@@ -10,10 +10,15 @@ def create_conversation_chain():
 
     llm = get_llm()
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are a helpful AI assistant. Engage in natural conversation and be informative."),
-        ("human", "{input}")
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful AI assistant. Engage in natural conversation and be informative.",
+            ),
+            ("human", "{input}"),
+        ]
+    )
 
     chain = prompt | llm | StrOutputParser()
     return chain
@@ -36,10 +41,9 @@ def create_drilling_conversation_chain():
     When discussing technical topics, explain concepts clearly.
     """
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", system_prompt),
-        ("human", "{input}")
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [("system", system_prompt), ("human", "{input}")]
+    )
 
     chain = prompt | llm | StrOutputParser()
     return chain
@@ -52,7 +56,9 @@ class ConversationManager:
         self.conversations = {}
         logger.info("Initialized ConversationManager")
 
-    def chat(self, session_id: str, message: str, conversation_type: str = "general") -> str:
+    def chat(
+        self, session_id: str, message: str, conversation_type: str = "general"
+    ) -> str:
         """Send a message to a conversation session"""
 
         try:
@@ -64,7 +70,9 @@ class ConversationManager:
 
             response = chain.invoke({"input": message})
 
-            logger.info(f"Processed message for session {session_id}: {message[:50]}...")
+            logger.info(
+                f"Processed message for session {session_id}: {message[:50]}..."
+            )
             return response
 
         except Exception as e:

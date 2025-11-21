@@ -18,7 +18,9 @@ class AIService:
         self.drilling_agent = DrillingAgent()
         logger.info("AI Service initialized with drilling agent")
 
-    def chat_with_data(self, session_id: str, message: str, chat_history: Optional[list] = None) -> Dict[str, Any]:
+    def chat_with_data(
+        self, session_id: str, message: str, chat_history: Optional[list] = None
+    ) -> Dict[str, Any]:
         """
         Main chat endpoint that processes user messages with RAG context
 
@@ -37,7 +39,7 @@ class AIService:
                 return {
                     "response": "I'm sorry, but your data session has expired or is invalid. Please upload your data again.",
                     "error": "invalid_session",
-                    "session_id": session_id
+                    "session_id": session_id,
                 }
 
             # Process with drilling agent
@@ -49,7 +51,7 @@ class AIService:
                 "response": response,
                 "session_id": session_id,
                 "agent": "drilling_agent",
-                "model_provider": ai_settings.model_provider
+                "model_provider": ai_settings.model_provider,
             }
 
         except Exception as e:
@@ -57,10 +59,12 @@ class AIService:
             return {
                 "response": f"I apologize, but I encountered an error processing your request: {str(e)}",
                 "error": "processing_error",
-                "session_id": session_id
+                "session_id": session_id,
             }
 
-    def get_conversation_response(self, session_id: str, message: str, conversation_type: str = "drilling") -> Dict[str, Any]:
+    def get_conversation_response(
+        self, session_id: str, message: str, conversation_type: str = "drilling"
+    ) -> Dict[str, Any]:
         """
         Get conversational response without RAG context
         Useful for general chat or when no data is uploaded
@@ -73,7 +77,7 @@ class AIService:
                 "response": response,
                 "session_id": session_id,
                 "conversation_type": conversation_type,
-                "model_provider": ai_settings.model_provider
+                "model_provider": ai_settings.model_provider,
             }
 
         except Exception as e:
@@ -81,7 +85,7 @@ class AIService:
             return {
                 "response": f"I apologize, but I encountered an error: {str(e)}",
                 "error": "conversation_error",
-                "session_id": session_id
+                "session_id": session_id,
             }
 
     def get_drilling_insights(self, session_id: str) -> Dict[str, Any]:
@@ -91,7 +95,7 @@ class AIService:
             if not validate_session(session_id):
                 return {
                     "insights": "Session not found or expired. Please upload data again.",
-                    "error": "invalid_session"
+                    "error": "invalid_session",
                 }
 
             insights = self.drilling_agent.get_drilling_insights(session_id)
@@ -99,14 +103,14 @@ class AIService:
             return {
                 "insights": insights,
                 "session_id": session_id,
-                "agent": "drilling_agent"
+                "agent": "drilling_agent",
             }
 
         except Exception as e:
             logger.error(f"Error getting insights: {e}")
             return {
                 "insights": f"Error generating insights: {str(e)}",
-                "error": "insights_error"
+                "error": "insights_error",
             }
 
     def clear_conversation(self, session_id: str, conversation_type: str = "drilling"):

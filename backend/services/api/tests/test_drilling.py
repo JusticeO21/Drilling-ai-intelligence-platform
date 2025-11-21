@@ -21,7 +21,10 @@ def test_upload_csv():
 
     # Test querying the session
     session_id = data["session_id"]
-    query_data = {"session_id": session_id, "question": "What is the depth of test_well?"}
+    query_data = {
+        "session_id": session_id,
+        "question": "What is the depth of test_well?",
+    }
     query_response = client.post("/api/v1/drilling/query", json=query_data)
     assert query_response.status_code == 200
     query_result = query_response.json()

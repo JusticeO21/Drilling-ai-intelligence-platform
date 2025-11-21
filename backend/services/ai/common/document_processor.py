@@ -20,19 +20,21 @@ def process_file_to_documents(file_content: bytes, filename: str) -> List[Docume
     """
 
     # Create temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[1]) as temp_file:
+    with tempfile.NamedTemporaryFile(
+        delete=False, suffix=os.path.splitext(filename)[1]
+    ) as temp_file:
         temp_file.write(file_content)
         temp_file_path = temp_file.name
 
     try:
         documents = []
 
-        if filename.endswith('.xlsx') or filename.endswith('.xls'):
+        if filename.endswith(".xlsx") or filename.endswith(".xls"):
             loader = UnstructuredExcelLoader(temp_file_path, mode="elements")
             documents = loader.load()
             logger.info(f"Loaded {len(documents)} elements from Excel file")
 
-        elif filename.endswith('.csv'):
+        elif filename.endswith(".csv"):
             loader = CSVLoader(temp_file_path)
             documents = loader.load()
             logger.info(f"Loaded {len(documents)} rows from CSV file")
@@ -46,9 +48,9 @@ def process_file_to_documents(file_content: bytes, filename: str) -> List[Docume
         os.unlink(temp_file_path)
 
 
-def split_documents(documents: List[Document],
-                   chunk_size: int = 1000,
-                   chunk_overlap: int = 200) -> List[Document]:
+def split_documents(
+    documents: List[Document], chunk_size: int = 1000, chunk_overlap: int = 200
+) -> List[Document]:
     """
     Split documents into smaller chunks using LangChain text splitter.
 
@@ -65,7 +67,7 @@ def split_documents(documents: List[Document],
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
         length_function=len,
-        separators=["\n\n", "\n", " ", ""]
+        separators=["\n\n", "\n", " ", ""],
     )
 
     split_docs = text_splitter.split_documents(documents)
@@ -90,5 +92,7 @@ def process_file_for_rag(file_content: bytes, filename: str) -> List[str]:
     chunked_docs = split_documents(documents)
     text_chunks = [doc.page_content for doc in chunked_docs]
 
-    logger.info(f"Processed {filename}: {len(documents)} docs → {len(text_chunks)} chunks")
+    logger.info(
+        f"Processed {filename}: {len(documents)} docs → {len(text_chunks)} chunks"
+    )
     return text_chunks

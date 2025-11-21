@@ -7,10 +7,9 @@ client = TestClient(app)
 
 def test_chat_endpoint_invalid_session():
     """Test chat with invalid session returns error"""
-    response = client.post("/api/v1/chat/", json={
-        "session_id": "invalid-session",
-        "message": "Hello"
-    })
+    response = client.post(
+        "/api/v1/chat/", json={"session_id": "invalid-session", "message": "Hello"}
+    )
 
     assert response.status_code == 200  # AI service handles session validation
     data = response.json()
@@ -19,10 +18,10 @@ def test_chat_endpoint_invalid_session():
 
 def test_chat_endpoint_structure():
     """Test chat endpoint returns proper structure"""
-    response = client.post("/api/v1/chat/", json={
-        "session_id": "test-session",
-        "message": "What is the depth?"
-    })
+    response = client.post(
+        "/api/v1/chat/",
+        json={"session_id": "test-session", "message": "What is the depth?"},
+    )
 
     assert response.status_code == 200
     data = response.json()
@@ -39,14 +38,17 @@ def test_chat_endpoint_with_history():
     """Test chat endpoint with conversation history"""
     chat_history = [
         {"user": "Hello", "assistant": "Hi there!"},
-        {"user": "How are you?", "assistant": "I'm doing well, thank you!"}
+        {"user": "How are you?", "assistant": "I'm doing well, thank you!"},
     ]
 
-    response = client.post("/api/v1/chat/", json={
-        "session_id": "test-session",
-        "message": "What's the weather like?",
-        "chat_history": chat_history
-    })
+    response = client.post(
+        "/api/v1/chat/",
+        json={
+            "session_id": "test-session",
+            "message": "What's the weather like?",
+            "chat_history": chat_history,
+        },
+    )
 
     assert response.status_code == 200
     data = response.json()

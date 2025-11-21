@@ -7,9 +7,12 @@ from common.logging import logger
 
 class VectorSearchInput(BaseModel):
     """Input schema for vector search tool"""
+
     query: str = Field(description="The search query to find relevant information")
     session_id: str = Field(description="The session ID containing the vector store")
-    max_results: Optional[int] = Field(default=5, description="Maximum number of results to return")
+    max_results: Optional[int] = Field(
+        default=5, description="Maximum number of results to return"
+    )
 
 
 class VectorSearchTool(BaseTool):
@@ -29,19 +32,25 @@ class VectorSearchTool(BaseTool):
             # Query the RAG system
             results = rag_manager.query_session(session_id, query, max_results)
 
-            if not results.get('relevant_chunks'):
-                return "No relevant information found in the uploaded data for this query."
+            if not results.get("relevant_chunks"):
+                return (
+                    "No relevant information found in the uploaded data for this query."
+                )
 
             # Format results
-            chunks = results['relevant_chunks']
+            chunks = results["relevant_chunks"]
             formatted_results = []
 
             for i, chunk in enumerate(chunks, 1):
                 formatted_results.append(f"Result {i}:\n{chunk}\n")
 
-            response = f"Found {len(chunks)} relevant results:\n\n" + "\n".join(formatted_results)
+            response = f"Found {len(chunks)} relevant results:\n\n" + "\n".join(
+                formatted_results
+            )
 
-            logger.info(f"Vector search returned {len(chunks)} results for session {session_id}")
+            logger.info(
+                f"Vector search returned {len(chunks)} results for session {session_id}"
+            )
             return response
 
         except ValueError as e:
@@ -56,7 +65,10 @@ class VectorSearchTool(BaseTool):
 
 class DataAnalysisInput(BaseModel):
     """Input schema for data analysis tool"""
-    analysis_type: str = Field(description="Type of analysis: 'summary', 'trends', 'anomalies', 'correlations'")
+
+    analysis_type: str = Field(
+        description="Type of analysis: 'summary', 'trends', 'anomalies', 'correlations'"
+    )
     session_id: str = Field(description="The session ID containing the data")
 
 

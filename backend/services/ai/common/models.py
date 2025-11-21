@@ -23,7 +23,9 @@ def get_llm() -> BaseLanguageModel:
         )
 
     elif ai_settings.model_provider == "ollama":
-        logger.info(f"Initializing Ollama model: {ai_settings.ollama_model} at {ai_settings.ollama_base_url}")
+        logger.info(
+            f"Initializing Ollama model: {ai_settings.ollama_model} at {ai_settings.ollama_base_url}"
+        )
         return ChatOllama(
             base_url=ai_settings.ollama_base_url,
             model=ai_settings.ollama_model,
@@ -44,12 +46,13 @@ def get_embedding_model() -> Embeddings:
 
         logger.info("Initializing OpenAI embeddings")
         return OpenAIEmbeddings(
-            api_key=ai_settings.openai_api_key,
-            model="text-embedding-3-small"
+            api_key=ai_settings.openai_api_key, model="text-embedding-3-small"
         )
 
     elif ai_settings.model_provider == "ollama":
-        logger.info(f"Initializing Ollama embeddings with model: {ai_settings.ollama_embedding_model}")
+        logger.info(
+            f"Initializing Ollama embeddings with model: {ai_settings.ollama_embedding_model}"
+        )
         return OllamaEmbeddings(
             model=ai_settings.ollama_embedding_model,
         )

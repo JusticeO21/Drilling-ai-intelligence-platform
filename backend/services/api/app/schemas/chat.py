@@ -1,9 +1,11 @@
 from pydantic import BaseModel
 from typing import Optional, List, TypedDict
 
+
 class Message(TypedDict):
     role: str
     content: str
+
 
 class ChatRequest(BaseModel):
     session_id: str

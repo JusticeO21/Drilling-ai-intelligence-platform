@@ -13,7 +13,8 @@ def create_rag_chain(session_id: str):
     llm = get_llm()
 
     # RAG prompt template
-    rag_prompt = ChatPromptTemplate.from_template("""
+    rag_prompt = ChatPromptTemplate.from_template(
+        """
 You are an expert oil drilling data analyst. Use the following context from uploaded drilling data to answer the user's question.
 
 Context from uploaded data:
@@ -28,22 +29,23 @@ Instructions:
 - Provide actionable insights when appropriate
 - Keep responses focused and professional
 
-Answer:""")
+Answer:"""
+    )
 
     def retrieve_and_format(query: str) -> str:
         """Retrieve context and format for the prompt"""
         try:
             context = retrieve_context(session_id, query)
-            logger.info(f"Retrieved context for session {session_id}: {len(context)} chars")
+            logger.info(
+                f"Retrieved context for session {session_id}: {len(context)} chars"
+            )
             return context
         except Exception as e:
             logger.error(f"Error retrieving context: {e}")
             return "Error retrieving context from uploaded data."
 
     rag_chain = (
-        RunnablePassthrough.assign(
-            context=lambda x: retrieve_and_format(x["question"])
-        )
+        RunnablePassthrough.assign(context=lambda x: retrieve_and_format(x["question"]))
         | rag_prompt
         | llm
         | StrOutputParser()
@@ -58,7 +60,8 @@ def create_conversational_rag_chain(session_id: str, chat_history: list = None):
     llm = get_llm()
 
     # Conversational RAG prompt
-    conversational_prompt = ChatPromptTemplate.from_template("""
+    conversational_prompt = ChatPromptTemplate.from_template(
+        """
 You are an expert oil drilling data analyst having a conversation with a user about their drilling data.
 
 Previous conversation:
@@ -76,7 +79,8 @@ Instructions:
 - Ask clarifying questions if needed
 - Maintain continuity in your analysis
 
-Answer:""")
+Answer:"""
+    )
 
     def format_chat_history(history: list) -> str:
         """Format chat history for the prompt"""
@@ -102,7 +106,7 @@ Answer:""")
     chain = (
         RunnablePassthrough.assign(
             context=lambda x: retrieve_and_format(x["question"]),
-            chat_history=lambda x: format_chat_history(x.get("chat_history", []))
+            chat_history=lambda x: format_chat_history(x.get("chat_history", [])),
         )
         | conversational_prompt
         | llm
