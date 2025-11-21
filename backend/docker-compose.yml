@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    container_name: drilldata-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./drilldata.db
+      - DEBUG=false
+      # AI Service Configuration
+      - AI_MODEL_PROVIDER=ollama
+      - AI_OLLAMA_BASE_URL=http://ollama:11434
+      - AI_OLLAMA_MODEL=llama2
+      - AI_OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+    volumes:
+      - chroma_data:/app/chroma_db
+      - ./logs:/app/logs
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # AI Service - LangChain agents and RAG
+  ai:
+    build:
+      context: .
+      dockerfile: services/ai/Dockerfile
+    container_name: drilldata-ai
+    environment:
+      - AI_MODEL_PROVIDER=ollama
+      - AI_OLLAMA_BASE_URL=http://ollama:11434
+      - AI_OLLAMA_MODEL=llama2
+      - AI_OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+    volumes:
+      - chroma_data:/app/chroma_db
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    profiles:
+      - ai 
+
+  # Ollama - Local LLM service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: drilldata-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL 
+  db:
+    image: postgres:15-alpine
+    container_name: drilldata-postgres
+    environment:
+      POSTGRES_DB: drilldata
+      POSTGRES_USER: drilldata_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-drilldata_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    profiles:
+      - db 
+
+volumes:
+  chroma_data:
+    driver: local
+  ollama_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: drilldata-network
