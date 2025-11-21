@@ -1,4 +1,9 @@
+# Author: Justice Owusu 
 # 🏭 Oil Drilling Data Analysis Dashboard
+
+## Demo Video
+[Watch the demo video](https://drive.google.com/file/d/11O4EBxYd5EMJTuMnKm6yLSjLMRnUB5ap/view?usp=sharing)
+
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
