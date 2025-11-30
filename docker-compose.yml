@@ -1,118 +1,120 @@
 version: '3.8'
 
+networks:
+  app-network:
+    driver: bridge
+    name: oil-drilling-network
+
+volumes:
+  chroma_data:
+  redis_data:
+  ollama_data:
+
 services:
-  # API Service - FastAPI backend
+  # API Service
   api:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: drilldata-api
+      context: .
+      dockerfile: backend/services/api/Dockerfile
+    container_name: oil-drilling-api
+    env_file: 
+      - .env
+    environment:
+      - NODE_ENV=development
+      - REDIS_HOST=redis
+      - CHROMA_HOST=chroma
+      - OLLAMA_BASE_URL=http://ollama:11434
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=sqlite:///./drilldata.db
-      - DEBUG=false
-      # AI Service Configuration
-      - AI_MODEL_PROVIDER=ollama
-      - AI_OLLAMA_BASE_URL=http://ollama:11434
-      - AI_OLLAMA_MODEL=llama2
-      - AI_OLLAMA_EMBEDDING_MODEL=nomic-embed-text
     volumes:
-      - chroma_data:/app/chroma_db
-      - ./backend/logs:/app/logs
+      - ./backend:/app/backend
+      - /app/backend/static
     depends_on:
-      - ollama
-    restart: unless-stopped
+      redis:
+        condition: service_healthy
+      chroma:
+        condition: service_started 
+      # ollama:
+      #   condition: service_healthy
+    networks:
+      - app-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - drilldata-network
 
-  # AI Service - LangChain agents and RAG
-  ai:
+  # Frontend Service
+  frontend:
     build:
-      context: ./backend
-      dockerfile: services/ai/Dockerfile
-    container_name: drilldata-ai
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: oil-drilling-frontend
     environment:
-      - AI_MODEL_PROVIDER=ollama
-      - AI_OLLAMA_BASE_URL=http://ollama:11434
-      - AI_OLLAMA_MODEL=llama2
-      - AI_OLLAMA_EMBEDDING_MODEL=nomic-embed-text
-    volumes:
-      - chroma_data:/app/chroma_db
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_BASE_PATH=
+    ports:
+      - "3000:3000"
     depends_on:
-      - ollama
-    restart: unless-stopped
-    profiles:
-      - ai
+      - api
     networks:
-      - drilldata-network
+      - app-network
 
-  # Ollama - Local LLM service
+  # Vector Database (No Auth)
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: oil-drilling-chroma
+    environment:
+      - ALLOW_RESET=TRUE
+      - IS_PERSISTENT=TRUE
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - app-network
+
+  # Cache & Session Store (No Password)
+  redis:
+    image: redis:7-alpine
+    container_name: oil-drilling-redis
+    command: sh -c 'redis-server --appendonly yes --requirepass "$${REDIS_PASSWORD}"'
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-defaultPassword123}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Local LLM Service
   ollama:
     image: ollama/ollama:latest
-    container_name: drilldata-ollama
+    container_name: oil-drilling-ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0
-    restart: unless-stopped
+    networks:
+      - app-network
     healthcheck:
-      test: ["CMD", "ollama", "list"]
+      test: ["CMD-SHELL", "ollama list || exit 1"] 
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - drilldata-network
-
-  # PostgreSQL Database
-  db:
-    image: postgres:15-alpine
-    container_name: drilldata-postgres
-    environment:
-      POSTGRES_DB: drilldata
-      POSTGRES_USER: drilldata_user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-drilldata_pass}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
-    profiles:
-      - db
-    networks:
-      - drilldata-network
-
-  # Frontend Service - Next.js application
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: drilldata-frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_BASE_URL=http://api:8000
-    depends_on:
-      - api
-    restart: unless-stopped
-    networks:
-      - drilldata-network
-
-volumes:
-  chroma_data:
-    driver: local
-  ollama_data:
-    driver: local
-  postgres_data:
-    driver: local
-
-networks:
-  drilldata-network:
-    driver: bridge
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G

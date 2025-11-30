@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings
 from typing import Optional, Literal
-from common.config import settings as global_settings
 
 
 class AISettings(BaseSettings):
@@ -9,16 +8,23 @@ class AISettings(BaseSettings):
     # OpenAI settings
     openai_api_key: Optional[str] = None
     openai_model: str = "gpt-4"
+    openai_embedding_model: str = "text-embedding-3-large"
     openai_temperature: float = 0.1
     openai_max_tokens: int = 1000
 
+    # Anthropic settings
+    anthropic_api_key: Optional[str] = None
+    anthropic_model: str = "claude-3-5-sonnet-20240620"
+    anthropic_embedding_model: str = "text-embedding-3-large"
+    anthropic_temperature: float = 0.1
+    anthropic_max_tokens: int = 1000
+
     # Ollama settings
-    ollama_model: str = "deepseek-v3.1:671b-cloud"  # Chat model
-    ollama_embedding_model: str = "nomic-embed-text"  # Embedding model
+    ollama_model: str = "llama2"
+    ollama_embedding_model: str = "nomic-embed-text"
     ollama_temperature: float = 0.1
     ollama_max_tokens: int = 1000
     ollama_api_key: Optional[str] = None
-    ollama_base_url: Optional[str] = None
 
     # RAG settings
     rag_max_chunks: int = 5

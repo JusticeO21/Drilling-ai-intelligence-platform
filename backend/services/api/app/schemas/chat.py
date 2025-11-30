@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, List, TypedDict
 
 
-class Message(TypedDict):
+class Message(BaseModel):
     role: str
     content: str
 
@@ -10,6 +10,7 @@ class Message(TypedDict):
 class ChatRequest(BaseModel):
     session_id: str
     message: Message
+    stream: bool = False
     chat_history: Optional[List[Message]] = None
 
 

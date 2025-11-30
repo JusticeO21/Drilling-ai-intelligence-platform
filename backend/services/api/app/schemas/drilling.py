@@ -5,12 +5,9 @@ from typing import List, Dict, Any, Optional
 class FileProcessingResponse(BaseModel):
     filename: str
     file_type: str
-    num_rows: int
     num_columns: int
     columns: List[str]
-    sample_data: List[Dict[str, Any]]
     session_id: str
-    chunks_count: int
 
 
 class QueryRequest(BaseModel):

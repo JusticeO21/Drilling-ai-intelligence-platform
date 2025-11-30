@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: drill-ai-intelligence-platform
+    env: docker
+    dockerfilePath: ./backend/services/api/Dockerfile
+    envVars:
+      - key: MODEL_PROVIDER
+        value: anthropic
+      - key: AI_ANTHROPIC_API_KEY
+        sync: false 
+      - key: EMBEDDING_PROVIDER
+        value: voyage
+      - key: VOYAGE_API_KEY
+        sync: false 
+      - key: REDIS_HOST
+        fromService:
+          name: redis
+          type: redis
+          property: host
+      - key: CHROMA_HOST
+        value: localhost  # ChromaDB in same container
+    
+  # Redis
+  - type: redis
+    name: oil-drilling-redis
+    plan: free  # Free for 90 days
+    maxmemoryPolicy: noeviction
+
+databases:
+  # ChromaDB - run as part of API service to save resources

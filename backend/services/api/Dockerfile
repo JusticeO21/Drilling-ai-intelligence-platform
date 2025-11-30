@@ -1,46 +1,43 @@
-# API Service Dockerfile - Production Ready
+# Production-Ready API Service Dockerfile
 FROM python:3.11-slim
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONPATH=/app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    ENVIRONMENT=production
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create app user for security
 RUN useradd --create-home --shell /bin/bash app
 
-# Set work directory
 WORKDIR /app
 
-# Copy requirements first for better Docker layer caching
-COPY ../../requirements.txt .
-
-# Install Python dependencies
+# Copy and install common requirements (adjust path for root context)
+COPY backend/common/requirements.txt /tmp/common-requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r /tmp/common-requirements.txt
 
-# Copy application code
-COPY ../../common ./common
-COPY . .
+# Note: AI requirements included due to current architectural coupling
+COPY backend/services/ai/requirements.txt /tmp/ai-requirements.txt
+RUN pip install --no-cache-dir -r /tmp/ai-requirements.txt
 
-# Create necessary directories and set permissions
-RUN mkdir -p /app/chroma_db && \
+# Copy and install API requirements
+COPY backend/services/api/requirements.txt /tmp/api-requirements.txt
+RUN pip install --no-cache-dir -r /tmp/api-requirements.txt
+
+COPY backend/ ./
+
+RUN mkdir -p /app/logs && \
     chown -R app:app /app
 
-# Switch to non-root user
 USER app
 
-# Expose port
 EXPOSE 8000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+CMD ["uvicorn", "services.api.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

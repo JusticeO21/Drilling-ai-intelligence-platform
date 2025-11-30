@@ -17,11 +17,13 @@ RUN useradd --create-home --shell /bin/bash app
 WORKDIR /app
 
 # Copy requirements first for better caching
-COPY ../../requirements.txt .
+COPY requirements.txt .
+COPY ../../common/requirements.txt ./common-requirements.txt
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r common-requirements.txt
 
 # Copy application code
 COPY ../../common ./common

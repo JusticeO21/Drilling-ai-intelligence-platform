@@ -1,0 +1,46 @@
+
+### Root `.dockerignore`:
+```
+# Exclude frontend from API builds
+frontend/node_modules
+frontend/.next
+frontend/dist
+frontend/build
+
+# Exclude Python cache
+**/__pycache__
+**/*.py[cod]
+**/*.so
+
+# Exclude common patterns
+.git
+.gitignore
+.env
+.venv
+venv/
+*.log
+.DS_Store
+.vscode
+.idea
+
+# But keep backend and necessary files
+!backend/
+```
+
+### Also create `frontend/.dockerignore`:
+```
+node_modules
+.next
+.git
+.gitignore
+README.md
+.env*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+*.pem
+coverage
+.vscode
+.idea

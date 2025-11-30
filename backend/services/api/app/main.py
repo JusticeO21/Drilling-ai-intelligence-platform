@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from .routers import wells, drilling, chat
+from services.api.app.routers import drilling, chat
 from common.config import settings
-from common.logging import logger
+from common.chroma_client import get_chroma_client as init_chroma_client
+from common.redis_client import get_redis_client as init_redis_client
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -18,9 +19,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(wells.router, prefix="/wells", tags=["wells"])
 app.include_router(drilling.router, prefix="/drilling", tags=["drilling"])
 app.include_router(chat.router, prefix="/chat", tags=["chat"])
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    init_chroma_client()
+    init_redis_client()
 
 
 @app.get("/")
