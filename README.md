@@ -44,6 +44,10 @@ Traditional oil drilling analysis relies on static spreadsheets and manual inter
 
 ## Architecture Overview
 
+![System Architecture](Architecture.png)
+
+### High-Level Architecture
+
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   API Service   │    │   AI Service    │
@@ -79,6 +83,8 @@ User Query → API Service → AI Agent → Classify → Retrieve → Generate �
 - ChromaDB: Semantic search and embeddings for RAG (accessed by API service)
 - Redis: Fast DataFrame access and session data caching (accessed by API service)
 - Session Isolation: Per-user data sessions with automatic cleanup
+
+For detailed architecture documentation including LangGraph workflows, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Technology Stack
 
@@ -165,6 +171,10 @@ pnpm dev
 ```
 
 See [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md) for detailed development instructions.
+
+For comprehensive system architecture details, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
+For CI/CD pipeline documentation, see [CI-CD.md](CI-CD.md).
 
 ## 📊 Data Format
 
