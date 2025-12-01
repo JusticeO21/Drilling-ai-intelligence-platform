@@ -1,0 +1,46 @@
+name: CI & Deploy to Render
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Run tests
+        run: |
+          cd backend
+          pytest -q
+  
+      - name: Build backend Docker image
+        working-directory: .
+        run: |
+          docker build -f ./backend/services/api/Dockerfile .
+
+      - name: Build frontend Docker image
+        working-directory: ./frontend
+        run: |
+          docker build -t frontend-app .
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          echo "Triggering Render deploy"
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
