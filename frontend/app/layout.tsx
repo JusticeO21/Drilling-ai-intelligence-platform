@@ -16,7 +16,7 @@ const ibmPlexSans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: 'Drill AI Intelligence Dashboard',
-  description: 'Intelligent platform for oil and gas drilling operations',
+  description: 'Intelligent platform for oil and gas drilling data',
   icons: {
     icon: [
       { url: '/favicon.ico', type: 'image/x-icon' },
