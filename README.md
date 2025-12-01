@@ -1,93 +1,125 @@
-# Author: Justice Owusu 
-# 🏭 Oil Drilling Data Analysis Dashboard
+# Oil Drilling Data Analysis Dashboard
+
+Author: Justice Owusu
 
 ## Demo Video
-[Watch the demo video](https://drive.google.com/file/d/11O4EBxYd5EMJTuMnKm6yLSjLMRnUB5ap/view?usp=sharing)
+Watch the demo video: https://drive.google.com/file/d/11O4EBxYd5EMJTuMnKm6yLSjLMRnUB5ap/view?usp=sharing
 
+A comprehensive fullstack AI-powered platform for oil drilling data analysis, featuring natural language queries, interactive visualizations, and intelligent insights. Upload drilling data and ask questions conversationally to unlock hidden patterns and correlations in your operational data.
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
-[![Next.js](https://img.shields.io/badge/Next.js-16+-black.svg)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://typescriptlang.org)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-A fullstack AI-powered platform for oil drilling data analysis, featuring natural language queries, interactive visualizations, and intelligent insights. Upload drilling data and ask questions conversationally to unlock hidden patterns and correlations.
-
-## 🎯 What It Does
+## What It Does
 
 Traditional oil drilling analysis relies on static spreadsheets and manual interpretation. This platform democratizes complex drilling data through:
 
-- **Conversational AI**: Ask questions like *"What were the drilling parameters during the stuck pipe incident?"* or *"Show me ROP trends in shale formations"*
-- **Interactive Visualizations**: Real-time charts for rock composition, sonic logs, gamma ray data, and more
-- **Intelligent Analysis**: AI-powered pattern recognition and correlation identification
-- **Multi-Modal Support**: Works with CSV, Excel, and structured drilling reports
+- Conversational AI: Ask questions like "What were the drilling parameters during the stuck pipe incident?" or "Show me ROP trends in shale formations"
+- Interactive Visualizations: Real-time charts for rock composition, sonic logs, gamma ray data, and more
+- Intelligent Analysis: AI-powered pattern recognition and correlation identification
+- Multi-Modal Support: Works with CSV, Excel, and structured drilling reports
+- Streaming Responses: Real-time AI chat with Server-Sent Events
+- Responsive Design: Optimized for desktop, tablet, and mobile devices
 
-## 🚀 Key Features
+## Key Features
 
-### 🤖 AI-Powered Analysis
-- **Natural Language Queries**: Ask questions in plain English
-- **Contextual Understanding**: AI trained on drilling terminology and concepts
-- **Session-Based Analysis**: Persistent data sessions with automatic cleanup
-- **Multi-Model Support**: OpenAI GPT-4 or local Ollama models (Llama, Mistral, etc.)
+### AI-Powered Analysis
+- Natural Language Queries: Ask questions in plain English about drilling data
+- Contextual Understanding: AI trained on drilling terminology and operational concepts
+- Streaming Chat: Real-time AI responses with Server-Sent Events
+- Session-Based Analysis: Persistent data sessions with automatic cleanup
+- Multi-Model Support: OpenAI GPT-4, Anthropic Claude, or local Ollama models (Llama, Mistral, etc.)
+- Advanced Agent Processing: LangGraph-powered query analysis with code execution
 
-### 📊 Data Visualization
-- **Interactive Charts**: Real-time visualization of drilling parameters
-- **Multi-Well Analysis**: Compare data across different wells
-- **Responsive Design**: Optimized for desktop, tablet, and mobile
-- **Synchronized Views**: Consistent depth scaling across all charts
+### Data Visualization
+- Interactive Charts: Real-time visualization of drilling parameters with synchronized depth scaling
+- Multi-Chart Dashboard: Rock composition, sonic logs (DT), and gamma ray logs (GR)
+- Responsive Grid Layout: Adaptive 1-3 column layout based on screen size
+- Client-Side Processing: Instant Excel/CSV parsing with immediate preview
+- Data Correlation: Consistent depth axis across all visualizations
 
-### 🏗️ Enterprise Architecture
-- **Microservices Design**: Scalable API, AI, and frontend services
-- **Vector Search**: Fast similarity search using ChromaDB
-- **Session Isolation**: Secure, per-user data sessions
-- **Production Ready**: Comprehensive logging, monitoring, and error handling
+### Enterprise Architecture
+- Microservices Design: Scalable API, AI, and frontend services with Docker orchestration
+- Dual Storage Strategy: ChromaDB for vector embeddings, Redis for DataFrame caching
+- Session Isolation: Secure, per-user data sessions with automatic expiration
+- Production Ready: Comprehensive logging, error handling, and health monitoring
+- Type Safety: 100% TypeScript coverage with strict mode
 
-## 🏛️ Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   API Service   │    │   AI Service    │
-│   (Next.js)     │◄──►│   (FastAPI)     │◄──►│   (LangChain)   │
+│   (Next.js)     │◄──►│   (FastAPI)     │◄──►│   (LangGraph)   │
 │                 │    │                 │    │                 │
-│ • File Upload   │    │ • Data Ingestion│    │ • RAG Engine    │
-│ • Chat Interface│    │ • Session Mgmt  │    │ • LLM Integration│
-│ • Data Viz      │    │ • Vector Storage│    │ • Agent Logic   │
+│ • File Upload   │    │ • Data Ingestion│    │ • Agent Workflow│
+│ • Chat Interface│    │ • Session Mgmt  │    │ • Code Execution│
+│ • Data Viz      │    │ • Vector Storage│    │ • Response Gen  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │                        │
-                              ▼                        ▼
-                       ┌─────────────────┐    ┌─────────────────┐
-                       │   ChromaDB      │    │   Ollama/       │
-                       │   Vector DB     │    │   OpenAI API    │
-                       └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                       ┌─────────────────┐
-                       │ PostgreSQL      │
-                       │ (Optional)      │
-                       └─────────────────┘
+                               │                        │
+                               ▼                        ▼
+                    ┌─────────────────┐         ┌─────────────────┐
+                    │   ChromaDB      │         │   Ollama/       │
+                    │   (Embeddings)  │         │   OpenAI API    │
+                    └─────────────────┘         └─────────────────┘
+                               │
+                               ▼
+                    ┌─────────────────┐
+                    │   Redis         │
+                    │ (DataFrames)    │
+                    └─────────────────┘
 ```
 
-## 🛠️ Technology Stack
+### Data Flow Architecture
 
-### Backend
-- **FastAPI**: High-performance async web framework
-- **LangChain**: LLM orchestration and RAG pipelines
-- **ChromaDB**: Vector database for embeddings
-- **SQLAlchemy**: Database ORM
-- **Pydantic**: Data validation and serialization
+**Ingestion Pipeline:**
+File Upload → Client Parsing → API Service → Data Ingestion → Vector Storage + Redis Cache
 
-### Frontend
-- **Next.js 16**: React framework with App Router
-- **TypeScript**: Type-safe development
-- **Tailwind CSS**: Utility-first styling
-- **shadcn/ui**: High-quality React components
-- **Recharts**: Interactive data visualization
+**Query Processing:**
+User Query → API Service → AI Agent → Classify → Retrieve → Generate → Execute → Stream Response
 
-### AI & Data
+**Storage Strategy:**
+- ChromaDB: Semantic search and embeddings for RAG (accessed by API service)
+- Redis: Fast DataFrame access and session data caching (accessed by API service)
+- Session Isolation: Per-user data sessions with automatic cleanup
+
+## Technology Stack
+
+### Backend Services
+- **FastAPI**: High-performance async web framework with automatic API documentation
+- **LangChain/LangGraph**: LLM orchestration, RAG pipelines, and agent workflow management
+- **ChromaDB**: Vector database for embeddings and semantic search
+- **Redis**: High-performance caching and DataFrame storage
+- **SQLAlchemy**: Database ORM with async support
+- **Pydantic**: Data validation and serialization with v2 features
+
+### Frontend Framework
+- **Next.js 16**: React framework with App Router, server components, and edge runtime
+- **React 19**: Latest React features with concurrent rendering and automatic batching
+- **TypeScript 5**: Strict type checking with advanced language features
+- **Tailwind CSS v4**: Utility-first CSS with modern features
+
+### UI & Design System
+- **shadcn/ui**: Production-ready component library built on Radix UI
+- **Radix UI**: Unstyled, accessible component primitives
+- **Recharts**: Declarative React charting library with D3.js foundation
+- **Lucide React**: Consistent icon library with 1000+ icons
+- **next-themes**: Theme switching with system preference detection
+
+### State Management & Data Fetching
+- **Zustand**: Lightweight state management with persistence middleware
+- **TanStack Query**: Powerful server state management with caching
+- **Local Storage API**: Browser storage with Zustand persistence
+
+### AI & Data Processing
 - **Ollama**: Local LLM server (Llama, Mistral, CodeLlama)
-- **OpenAI**: Cloud LLM integration (GPT-4, GPT-3.5-turbo)
+- **OpenAI/Anthropic**: Cloud LLM integration (GPT-4, Claude)
 - **Pandas**: Data manipulation and analysis
-- **Unstructured**: Document processing
+- **xlsx/papaparse**: Client-side Excel and CSV processing
+- **LangGraph Agents**: Complex multi-step AI workflows
+
+### Development & Quality Tools
+- **ESLint**: Advanced linting with Next.js and TypeScript rules
+- **Prettier**: Opinionated code formatting
+- **Docker**: Containerized deployment with multi-service orchestration
+- **pnpm**: Fast, disk-efficient package manager
 
 ## 🚀 Quick Start
 
@@ -144,48 +176,107 @@ The platform accepts drilling data with these key columns:
 
 **Supported formats**: Excel (.xlsx/.xls), CSV (.csv)
 
-## 📚 API Overview
+## API Overview
 
 ### Core Endpoints
-- `POST /api/v1/drilling/upload` - Upload drilling data files
-- `POST /api/v1/chat/` - Query data with natural language
-- `GET /api/v1/drilling/session/{session_id}` - Get session info
+
+#### Data Management
+- `POST /drilling/upload` - Upload and process drilling data files
+- `POST /drilling/query` - Query uploaded data with structured queries
+- `GET /drilling/session/{session_id}` - Retrieve session information
+
+#### AI Chat
+- `POST /chat/` - Conversational AI queries with streaming support
+- `GET /health` - Service health check endpoint
 
 ### Example Usage
+
 ```python
 import requests
 
-# Upload data
+# Upload drilling data
 files = {'file': open('drilling_data.xlsx', 'rb')}
-response = requests.post('http://localhost:8000/api/v1/drilling/upload', files=files)
-session_id = response.json()['session_id']
+response = requests.post('http://localhost:8000/drilling/upload', files=files)
+data = response.json()
+session_id = data['session_id']
+print(f"Uploaded {data['filename']} with {data['num_columns']} columns")
 
-# Query data
-query = {
+# Query with AI agent
+chat_request = {
     "session_id": session_id,
-    "message": {"role": "user", "content": "What is the average ROP in shale?"}
+    "message": {
+        "role": "user",
+        "content": "What were the drilling parameters during the stuck pipe incident?"
+    },
+    "stream": False
 }
-response = requests.post('http://localhost:8000/api/v1/chat/', json=query)
+response = requests.post('http://localhost:8000/chat/', json=chat_request)
 print(response.json()['message']['content'])
+
+# Get session info
+session_info = requests.get(f'http://localhost:8000/drilling/session/{session_id}')
+print(session_info.json())
 ```
 
-See [backend/README.md](backend/README.md) for complete API documentation.
+See [backend/README.md](backend/README.md) for complete API documentation and [frontend/README.md](frontend/README.md) for client-side integration details.
 
-## ⚙️ Configuration
+## Configuration
+
+### Backend Environment Variables
 
 Create a `.env` file in the backend directory:
 
 ```bash
-# AI Configuration
-AI_MODEL_PROVIDER=ollama  # or "openai"
+# Application Settings
+DEBUG=false
+SECRET_KEY=your-secret-key-here
+
+# AI Service Configuration
+AI_MODEL_PROVIDER=ollama  # or "openai" or "anthropic"
 AI_OLLAMA_BASE_URL=http://ollama:11434
 AI_OLLAMA_MODEL=llama2
+AI_OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+AI_OPENAI_API_KEY=your-openai-key-here
+AI_OPENAI_MODEL=gpt-4
+AI_ANTHROPIC_API_KEY=your-anthropic-key-here
+AI_VOYAGE_API_KEY=your-voyage-key-here
 
-# Database (optional)
-POSTGRES_PASSWORD=your_password
+# Database (Optional)
+DATABASE_URL=sqlite:///./drilldata.db
+POSTGRES_PASSWORD=your-postgres-password
+
+# Redis Configuration
+REDIS_URL=redis://localhost:6379
+UPSTASH_REDIS_REST_URL=your-upstash-url
+UPSTASH_REDIS_REST_TOKEN=your-upstash-token
+
+# RAG Settings
+AI_RAG_MAX_CHUNKS=5
+AI_RAG_CHUNK_OVERLAP=200
 ```
 
-## 🧪 Testing
+### Frontend Environment Variables
+
+Create a `.env.local` file in the frontend directory:
+
+```bash
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+### Model Configuration
+
+**Local Models (Ollama):**
+- Install Ollama and pull preferred models
+- Set `AI_MODEL_PROVIDER=ollama`
+- Configure model names in environment variables
+
+**Cloud Models (OpenAI/Anthropic):**
+- Obtain API keys from respective providers
+- Set appropriate `AI_MODEL_PROVIDER`
+- Configure API keys and model names
+
+## Testing
 
 ```bash
 # Backend tests
@@ -195,16 +286,22 @@ pytest
 # Frontend tests (when implemented)
 cd frontend
 pnpm test
+
+# With coverage
+cd backend
+pytest --cov=services --cov-report=html
 ```
 
-## 🔒 Security & Privacy
+## Security & Privacy
 
-- **Session Isolation**: Each upload creates isolated data sessions
-- **Automatic Cleanup**: Sessions expire after 24 hours
-- **No Permanent Storage**: Uploaded data is not persisted long-term
-- **Environment Variables**: Sensitive keys stored securely
+- Session Isolation: Each upload creates isolated data sessions with unique identifiers
+- Automatic Cleanup: Sessions expire after 24 hours with automatic data removal
+- No Permanent Storage: Uploaded data is not persisted long-term beyond session lifetime
+- Environment Variables: Sensitive API keys and configuration stored securely
+- Type Safety: 100% TypeScript coverage prevents runtime errors and injection attacks
+- CORS Configuration: Properly configured cross-origin resource sharing
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -213,23 +310,42 @@ pnpm test
 5. Open a Pull Request
 
 ### Development Guidelines
-- **Backend**: Black formatter, isort imports, minimum 80% test coverage
-- **Frontend**: ESLint, Prettier, TypeScript strict mode
-- **Documentation**: Update READMEs for new features
 
-## 📄 License
+**Backend:**
+- Black formatter for consistent code style
+- isort for import organization
+- Minimum 80% test coverage
+- Type hints and docstrings required
+
+**Frontend:**
+- ESLint with Next.js configuration
+- Prettier for code formatting
+- TypeScript strict mode enabled
+- Component composition over inheritance
+
+**General:**
+- Update READMEs for new features
+- Follow conventional commit format
+- Ensure responsive design principles
+- Test across different screen sizes
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- **LangChain** for LLM orchestration
-- **ChromaDB** for vector database functionality
-- **Ollama** for local LLM accessibility
-- **FastAPI** for the async web framework
-- **Next.js** for the React framework
-- **shadcn/ui** for beautiful components
+- LangChain and LangGraph for LLM orchestration and agent workflows
+- ChromaDB for reliable vector database functionality
+- Redis for high-performance caching and data storage
+- Ollama for making local LLMs accessible
+- OpenAI and Anthropic for cloud LLM capabilities
+- FastAPI for the exceptional async web framework
+- Next.js for the powerful React framework with App Router
+- shadcn/ui for the beautiful and accessible component library
+- TanStack Query for advanced data fetching and caching
+- Recharts for the comprehensive charting capabilities
 
 ---
 
-**Oil Drilling Data Analysis Dashboard** - Transforming drilling data analysis through conversational AI and interactive visualization. 🚀
+Oil Drilling Data Analysis Dashboard - Transforming drilling data analysis through conversational AI, advanced agent processing, and interactive visualization.
